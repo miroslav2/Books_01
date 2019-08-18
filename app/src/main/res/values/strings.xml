@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Books_0_00_1</string>
+    <string name="et_Email">E-mail</string>
+    <string name="et_Password">Password</string>
+    <string name="button_in">Регистрация</string>
+    <string name="button_login">Вход</string>
+    <string name="btn_all_books">Все книги</string>
+    <string name="btn_books_for_me">Вам понравится</string>
+    <string name="btn_my_books">Мои книги</string>
+    <string name="tv_wait">Pleas wait...</string>
+    <string name="tv_item">TextView</string>
+</resources>
