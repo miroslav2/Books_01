@@ -60,6 +60,8 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
 
         location = 0;
 
+        mAuth = FirebaseAuth.getInstance();
+
         myRef = FirebaseDatabase.getInstance().getReference();
 
         user = mAuth.getCurrentUser();
@@ -71,21 +73,21 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 GenericTypeIndicator<List<String>> t = new GenericTypeIndicator<List<String>>() {};
-                dataSnapshot.child(String.valueOf(t));
-                ds = dataSnapshot;
-                name = String.valueOf(dataSnapshot.child("Name").getValue());
-                dataSnapshot = ds;
-                author = String.valueOf(dataSnapshot.child("Author").getValue());
-                dataSnapshot = ds;
-                genr = String.valueOf(dataSnapshot.child("Genr").getValue());
-                dataSnapshot = ds;
-                description = String.valueOf(dataSnapshot.child("Description").getValue());
-                dataSnapshot = ds;
-                year = (int) dataSnapshot.child("Year").getValue();
-                dataSnapshot = ds;
-                like = (boolean) dataSnapshot.child("Like").getValue();
-                dataSnapshot = ds;
-                id = (int) dataSnapshot.child("Id").getValue();
+                ds = dataSnapshot.child(String.valueOf(t));
+
+                name = String.valueOf(ds.child("Name").getValue());
+
+                author = String.valueOf(ds.child("Author").getValue());
+
+                genr = String.valueOf(ds.child("Genr").getValue());
+
+                description = String.valueOf(ds.child("Description").getValue());
+
+                year = (int) ds.child("Year").getValue();
+
+                like = (boolean) ds.child("Like").getValue();
+
+                id = (int) ds.child("Id").getValue();
 
                 books_name.add(book = new Book_item(name, author, genr, description, like, id, year));
 
@@ -106,19 +108,21 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     GenericTypeIndicator<List<String>> t = new GenericTypeIndicator<List<String>>() {};
-                    dataSnapshot.child(String.valueOf(t));
-                    ds = dataSnapshot;
-                    name = String.valueOf(dataSnapshot.child("Name").getValue());
-                    dataSnapshot = ds;
-                    author = String.valueOf(dataSnapshot.child("Author").getValue());
-                    dataSnapshot = ds;
-                    genr = String.valueOf(dataSnapshot.child("Genr").getValue());
-                    dataSnapshot = ds;
-                    description = String.valueOf(dataSnapshot.child("Description").getValue());
-                    dataSnapshot = ds;
-                    year = (int) dataSnapshot.child("Year").getValue();
-                    dataSnapshot = ds;
-                    like = (boolean) dataSnapshot.child("Like").getValue();
+                    ds = dataSnapshot.child(String.valueOf(t));
+
+                    name = String.valueOf(ds.child("Name").getValue());
+
+                    author = String.valueOf(ds.child("Author").getValue());
+
+                    genr = String.valueOf(ds.child("Genr").getValue());
+
+                    description = String.valueOf(ds.child("Description").getValue());
+
+                    year = (int) ds.child("Year").getValue();
+
+                    like = (boolean) ds.child("Like").getValue();
+
+                    id = (int) ds.child("Id").getValue();
 
                     books_name.add(book = new Book_item(name, author, genr, description, like, id, year));
 
@@ -136,7 +140,6 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
                 if(bookItem.getLike()){
                     my_books_name.add(my_book = new Book_item(bookItem.getName(),bookItem.getAuthor(),bookItem.getGenr(),bookItem.getDescription(),bookItem.getLike(), bookItem.getId(),bookItem.getYear()));
                     myRef = FirebaseDatabase.getInstance().getReference().child(user.getUid()).child("AllBooks").child(String.valueOf(bookItem.getId())).child("Like");
-                    myRef.setValue(null);
                     myRef.setValue(true);
                 }
             }

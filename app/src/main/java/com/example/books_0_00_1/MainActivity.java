@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
-                    Intent intent = new Intent(MainActivity.this, ReadActivity.class);
+                    Intent intent = new Intent(MainActivity.this, WaitActivity.class);
                     startActivity(intent);
                 } else {
                     // User is signed out
@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
-            Intent intent = new Intent(MainActivity.this, ReadActivity.class);
+            Intent intent = new Intent(MainActivity.this, WaitActivity.class);
             startActivity(intent);
         }
     }
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
                     Toast.makeText(MainActivity.this, "Authorisation successful", Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(MainActivity.this, ReadActivity.class);
+                    Intent intent = new Intent(MainActivity.this, WaitActivity.class);
                     startActivity(intent);
                 } else {
                     Toast.makeText(MainActivity.this, "Authorisation not successful", Toast.LENGTH_LONG).show();
