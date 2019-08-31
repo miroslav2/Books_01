@@ -36,6 +36,12 @@ public class WaitActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wait);
 
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         mAuth = FirebaseAuth.getInstance();
 
         myRef_1 = FirebaseDatabase.getInstance().getReference();

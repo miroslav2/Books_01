@@ -55,13 +55,6 @@
             android:text="@string/btn_all_books" />
 
         <Button
-            android:id="@+id/btn_books_for_me"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/btn_books_for_me" />
-
-        <Button
             android:id="@+id/btn_my_books"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

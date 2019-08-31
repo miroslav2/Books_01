@@ -47,11 +47,9 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_read);
 
         btn_all_books = (Button) findViewById(R.id.btn_all_books);
-        btn_books_for_me = (Button) findViewById(R.id.btn_books_for_me);
         btn_my_books = (Button) findViewById(R.id.btn_my_books);
 
         btn_all_books.setOnClickListener(this);
-        btn_books_for_me.setOnClickListener(this);
         btn_my_books.setOnClickListener(this);
 
         books_name = new ArrayList<>();
@@ -134,7 +132,6 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
             });
 
             location = 0;
-        } else if ((view.getId() == R.id.btn_books_for_me) && (location != 1)){
         } else if ((view.getId() == R.id.btn_my_books) && (location != 2)){
             for (Book_item bookItem: adapter.get_Like()){
                 if(bookItem.getLike()){
