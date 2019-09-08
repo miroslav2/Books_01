@@ -15,7 +15,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class AuthorisationActivity extends AppCompatActivity implements View.OnClickListener {
 
     protected FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -66,13 +66,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if((et_email.getText().length() != 0) && (et_password.getText().length() != 0)) {
                 signing(et_email.getText().toString(), et_password.getText().toString());
             } else {
-                Toast.makeText(MainActivity.this, "Authorisation not successful", Toast.LENGTH_LONG).show();
+                Toast.makeText(AuthorisationActivity.this, "Authorisation not successful", Toast.LENGTH_LONG).show();
             }
         } else if (view.getId() == R.id.btn_registration){
             if ((et_email.getText().length() != 0) && (et_password.getText().length() != 0)) {
                 registration(et_email.getText().toString(), et_password.getText().toString());
             } else {
-                Toast.makeText(MainActivity.this, "Registration not successful", Toast.LENGTH_LONG).show();
+                Toast.makeText(AuthorisationActivity.this, "Registration not successful", Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -82,10 +82,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    Toast.makeText(MainActivity.this, "Authorisation successful", Toast.LENGTH_LONG).show();
+                    Toast.makeText(AuthorisationActivity.this, "Authorisation successful", Toast.LENGTH_LONG).show();
                     StartActivity();
                 } else {
-                    Toast.makeText(MainActivity.this, "Authorisation not successful", Toast.LENGTH_LONG).show();
+                    Toast.makeText(AuthorisationActivity.this, "Authorisation not successful", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -96,17 +96,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
-                    Toast.makeText(MainActivity.this, "Registration successful", Toast.LENGTH_LONG).show();
+                    Toast.makeText(AuthorisationActivity.this, "Registration successful", Toast.LENGTH_LONG).show();
                     StartActivity();
                 } else {
-                    Toast.makeText(MainActivity.this, "Registration not successful", Toast.LENGTH_LONG).show();
+                    Toast.makeText(AuthorisationActivity.this, "Registration not successful", Toast.LENGTH_LONG).show();
                 }
             }
         });
     }
 
     private void StartActivity(){
-        Intent intent = new Intent(MainActivity.this, WaitActivity.class);
+        Intent intent = new Intent(AuthorisationActivity.this, ReadActivity.class);
         startActivity(intent);
     }
 }

@@ -33,11 +33,11 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
     private ListView lv_books;
     private ArrayList<Book_item> books_name;
     private ArrayList<Book_item> my_books_name;
-    private Book_item book;
     private Book_item my_book;
     private String name, author, genr, description;
     private int year, id;
     private boolean like;
+    private int i;
     private DataSnapshot ds;
     private BoxAdapter adapter;
 
@@ -58,91 +58,79 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
 
         location = 0;
 
+        i = 0;
+
         mAuth = FirebaseAuth.getInstance();
 
         myRef = FirebaseDatabase.getInstance().getReference();
 
-        user = mAuth.getCurrentUser();
-
-        myRef.child(user.getUid());
         myRef.child("AllBooks");
 
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                GenericTypeIndicator<List<String>> t = new GenericTypeIndicator<List<String>>() {};
-                ds = dataSnapshot.child(String.valueOf(t));
+                ds = dataSnapshot.child(String.valueOf(i));
 
-                name = String.valueOf(ds.child("Name").getValue());
+                Create_Books_Name(ds);
 
-                author = String.valueOf(ds.child("Author").getValue());
-
-                genr = String.valueOf(ds.child("Genr").getValue());
-
-                description = String.valueOf(ds.child("Description").getValue());
-
-                year = (int) ds.child("Year").getValue();
-
-                like = (boolean) ds.child("Like").getValue();
-
-                id = (int) ds.child("Id").getValue();
-
-                books_name.add(book = new Book_item(name, author, genr, description, like, id, year));
-
-                UpdateUI(books_name);
+                i++;
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {}
         });
-
+        UpdateUI(books_name);
     }
 
     @Override
     public void onClick(View view) {
         if ((view.getId() == R.id.btn_all_books) && (location != 0)){
-            myRef = FirebaseDatabase.getInstance().getReference().child(user.getUid()).child("AllBooks");
+            myRef = FirebaseDatabase.getInstance().getReference().child("AllBooks");
             myRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    GenericTypeIndicator<List<String>> t = new GenericTypeIndicator<List<String>>() {};
-                    ds = dataSnapshot.child(String.valueOf(t));
+                    ds = dataSnapshot.child(String.valueOf(i));
 
-                    name = String.valueOf(ds.child("Name").getValue());
+                    Create_Books_Name(ds);
 
-                    author = String.valueOf(ds.child("Author").getValue());
+                    i++;
 
-                    genr = String.valueOf(ds.child("Genr").getValue());
-
-                    description = String.valueOf(ds.child("Description").getValue());
-
-                    year = (int) ds.child("Year").getValue();
-
-                    like = (boolean) ds.child("Like").getValue();
-
-                    id = (int) ds.child("Id").getValue();
-
-                    books_name.add(book = new Book_item(name, author, genr, description, like, id, year));
-
-                    UpdateUI(books_name);
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {}
             });
-
+            UpdateUI(books_name);
             location = 0;
         } else if ((view.getId() == R.id.btn_my_books) && (location != 2)){
             for (Book_item bookItem: adapter.get_Like()){
                 if(bookItem.getLike()){
-                    my_books_name.add(my_book = new Book_item(bookItem.getName(),bookItem.getAuthor(),bookItem.getGenr(),bookItem.getDescription(),bookItem.getLike(), bookItem.getId(),bookItem.getYear()));
-                    myRef = FirebaseDatabase.getInstance().getReference().child(user.getUid()).child("AllBooks").child(String.valueOf(bookItem.getId())).child("Like");
+                    my_books_name.add(new Book_item(bookItem.getName(),bookItem.getAuthor(),bookItem.getGenr(),bookItem.getDescription(),bookItem.getLike(), bookItem.getId(),bookItem.getYear()));
+                    myRef = FirebaseDatabase.getInstance().getReference().child("AllBooks").child(String.valueOf(bookItem.getId())).child("Like");
                     myRef.setValue(true);
                 }
             }
             UpdateUI(my_books_name);
             location = 2;
         }
+    }
+
+    private void Create_Books_Name (DataSnapshot _ds){
+        name = _ds.child("Name").getValue(String.class);
+
+        author = _ds.child("Author").getValue(String.class);
+
+        genr = _ds.child("Genr").getValue(String.class);
+
+        description = _ds.child("Description").getValue(String.class);
+
+        year = _ds.child("Year").getValue(int.class);
+
+        like = _ds.child("Like").getValue(boolean.class);
+
+        id = _ds.child("Id").getValue(int.class);
+
+        books_name.add(new Book_item(name, author, genr, description, like, id, year));
     }
 
     private void UpdateUI(ArrayList<Book_item> books){
