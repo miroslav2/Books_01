@@ -64,9 +64,7 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
 
         myRef = FirebaseDatabase.getInstance().getReference();
 
-        myRef.child("AllBooks");
-
-        myRef.addValueEventListener(new ValueEventListener() {
+        myRef.child("AllBooks").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 ds = dataSnapshot.child(String.valueOf(i));
