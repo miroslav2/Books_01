@@ -34,11 +34,7 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
     private ArrayList<Book_item> books_name;
     private ArrayList<Book_item> my_books_name;
     private Book_item my_book;
-    private String name, author, genr, description;
-    private int year, id;
-    private boolean like;
-    private int i;
-    private DataSnapshot ds;
+    private String name, author, genr, description, year, id;
     private BoxAdapter adapter;
 
     @Override
@@ -58,20 +54,16 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
 
         location = 0;
 
-        i = 0;
-
         mAuth = FirebaseAuth.getInstance();
 
         myRef = FirebaseDatabase.getInstance().getReference();
 
-        myRef.child("AllBooks").addValueEventListener(new ValueEventListener() {
+        myRef.child("AllBooks").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                ds = dataSnapshot.child(String.valueOf(i));
-
-                Create_Books_Name(ds);
-
-                i++;
+                for(DataSnapshot ds : dataSnapshot.getChildren()) {
+                    Create_Books_Name(ds);
+                }
             }
 
             @Override
@@ -84,15 +76,12 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         if ((view.getId() == R.id.btn_all_books) && (location != 0)){
             myRef = FirebaseDatabase.getInstance().getReference().child("AllBooks");
-            myRef.addValueEventListener(new ValueEventListener() {
+            myRef.child("AllBooks").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    ds = dataSnapshot.child(String.valueOf(i));
-
-                    Create_Books_Name(ds);
-
-                    i++;
-
+                    for(DataSnapshot ds : dataSnapshot.getChildren()) {
+                        Create_Books_Name(ds);
+                    }
                 }
 
                 @Override
@@ -101,13 +90,7 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
             UpdateUI(books_name);
             location = 0;
         } else if ((view.getId() == R.id.btn_my_books) && (location != 2)){
-            for (Book_item bookItem: adapter.get_Like()){
-                if(bookItem.getLike()){
-                    my_books_name.add(new Book_item(bookItem.getName(),bookItem.getAuthor(),bookItem.getGenr(),bookItem.getDescription(),bookItem.getLike(), bookItem.getId(),bookItem.getYear()));
-                    myRef = FirebaseDatabase.getInstance().getReference().child("AllBooks").child(String.valueOf(bookItem.getId())).child("Like");
-                    myRef.setValue(true);
-                }
-            }
+
             UpdateUI(my_books_name);
             location = 2;
         }
@@ -122,13 +105,11 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
 
         description = _ds.child("Description").getValue(String.class);
 
-        year = _ds.child("Year").getValue(int.class);
+        year = _ds.child("Year").getValue(String.class);
 
-        like = _ds.child("Like").getValue(boolean.class);
+        id = _ds.child("Id").getValue(String.class);
 
-        id = _ds.child("Id").getValue(int.class);
-
-        books_name.add(new Book_item(name, author, genr, description, like, id, year));
+        books_name.add(new Book_item(name, author, genr, description, id, year));
     }
 
     private void UpdateUI(ArrayList<Book_item> books){

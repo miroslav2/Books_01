@@ -2,18 +2,15 @@ package com.example.books_0_00_1.castomAdapter;
 
 public class Book_item {
 
-    private String name, author, genr, description;
-    private int year, id;
-    private boolean like;
+    private String name, author, genr, description, year, id;
 
 
 
-    public Book_item(String _name, String _author, String _genr, String _description, boolean _like, int _id, int _year){
+    public Book_item(String _name, String _author, String _genr, String _description, String _id, String _year){
         this.name = _name;
         this.author = _author;
         this.genr = _genr;
         this.description = _description;
-        this.like = _like;
         this.id = _id;
         this.year = _year;
     }
@@ -34,15 +31,11 @@ public class Book_item {
         return description;
     }
 
-    public Boolean getLike() {
-        return like;
-    }
-
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public int getYear() {
+    public String getYear() {
         return year;
     }
 
@@ -62,15 +55,11 @@ public class Book_item {
         this.description = description;
     }
 
-    public void setLike(Boolean like) {
-        this.like = like;
-    }
-
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public void setYear(int year) {
+    public void setYear(String year) {
         this.year = year;
     }
 }

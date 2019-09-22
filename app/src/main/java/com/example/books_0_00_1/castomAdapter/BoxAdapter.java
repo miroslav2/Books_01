@@ -58,13 +58,6 @@ public class BoxAdapter extends BaseAdapter {
             ((TextView) view.findViewById(R.id.tv_year)).setText(book_item.getYear());
             ((TextView) view.findViewById(R.id.tv_description)).setText(book_item.getDescription());
 
-            CheckBox cb_like = (CheckBox) view.findViewById(R.id.cb_like);
-
-            cb_like.setOnCheckedChangeListener(myCheckChangList);
-
-            cb_like.setTag(position);
-
-            cb_like.setChecked(book_item.getLike());
         }
         return view;
     }
@@ -73,20 +66,4 @@ public class BoxAdapter extends BaseAdapter {
         return ((Book_item) getItem(position));
     }
 
-    public ArrayList<Book_item> get_Like(){
-        ArrayList<Book_item> like = new ArrayList<>();
-        for (Book_item book_item: objects){
-            if (book_item.getLike()){
-                like.add(book_item);
-            }
-        }
-        return like;
-    }
-
-    OnCheckedChangeListener myCheckChangList = new OnCheckedChangeListener(){
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            getBook_item((Integer) buttonView.getTag()).setLike(isChecked);
-        }
-    };
 }
