@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.example.books_0_00_1.castomAdapter.Book_item;
@@ -23,37 +25,36 @@ import java.util.List;
 
 public class ReadActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Button btn_all_books;
-    private Button btn_books_for_me;
-    private Button btn_my_books;
-    private byte location;
+    private ImageButton btn_search, btn_sort;
     private FirebaseAuth mAuth;
     private DatabaseReference myRef;
     private FirebaseUser user;
     private ListView lv_books;
-    private ArrayList<Book_item> books_name;
-    private ArrayList<Book_item> my_books_name;
-    private Book_item my_book;
+    private ArrayList<Book_item> books_name, books_name_search;
+   // private Book_item my_book;
     private String name, author, genr, description;
-    private Integer year, id;
+    private Integer year, id, log;
     private BoxAdapter adapter;
+    private EditText et_search;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_read);
 
-        btn_all_books = (Button) findViewById(R.id.btn_all_books);
-        btn_my_books = (Button) findViewById(R.id.btn_my_books);
+        btn_search = (ImageButton) findViewById(R.id.btn_search);
+        btn_sort = (ImageButton) findViewById(R.id.btn_sort);
+        et_search = (EditText) findViewById(R.id.et_search);
 
-        btn_all_books.setOnClickListener(this);
-        btn_my_books.setOnClickListener(this);
+        btn_search.setOnClickListener(this);
+        btn_sort.setOnClickListener(this);
 
         books_name = new ArrayList<>();
+        books_name_search = new ArrayList<>();
+
+        log = 0;
 
         lv_books = (ListView) findViewById(R.id.lv_books);
-
-        location = 0;
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -65,6 +66,7 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
                 for(DataSnapshot ds : dataSnapshot.getChildren()) {
                     Create_Books_Name(ds);
                 }
+                log = 1;
             }
 
             @Override
@@ -75,26 +77,16 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        if ((view.getId() == R.id.btn_all_books) && (location != 0)){
-            myRef = FirebaseDatabase.getInstance().getReference().child("AllBooks");
-            myRef.child("AllBooks").addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    for(DataSnapshot ds : dataSnapshot.getChildren()) {
-                        Create_Books_Name(ds);
-                    }
+        if(view.getId() == R.id.btn_search && log == 1){
+            books_name_search.clear();
+            for (Book_item s : books_name) {
+                if (s.getName().contains(et_search.getText())) {
+                    books_name_search.add(s);
                 }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {}
-            });
-            UpdateUI(books_name);
-            location = 0;
-        } else if ((view.getId() == R.id.btn_my_books) && (location != 2)){
-
-            UpdateUI(my_books_name);
-            location = 2;
+            }
+            UpdateUI(books_name_search);
         }
+
     }
 
     private void Create_Books_Name (DataSnapshot _ds){
