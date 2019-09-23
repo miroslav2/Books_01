@@ -56,7 +56,7 @@ public class AuthorisationActivity extends AppCompatActivity implements View.OnC
 
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
-           // StartActivity();
+            StartActivity();
         }
     }
 
