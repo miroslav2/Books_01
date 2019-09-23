@@ -21,6 +21,8 @@ import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class ReadActivity extends AppCompatActivity implements View.OnClickListener {
@@ -108,5 +110,14 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
     private void UpdateUI(ArrayList<Book_item> books){
         adapter = new BoxAdapter(this, books);
         lv_books.setAdapter(adapter);
+    }
+
+    public void sort() {
+        Collections.sort(books_name, new Comparator<Book_item>() {
+            @Override
+            public int compare(Book_item book_item, Book_item t1) {
+               return book_item.getName().compareToIgnoreCase(t1.getName());
+            }
+        });
     }
 }
