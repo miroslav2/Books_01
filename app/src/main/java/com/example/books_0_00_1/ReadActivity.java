@@ -34,7 +34,8 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
     private ArrayList<Book_item> books_name;
     private ArrayList<Book_item> my_books_name;
     private Book_item my_book;
-    private String name, author, genr, description, year, id;
+    private String name, author, genr, description;
+    private Integer year, id;
     private BoxAdapter adapter;
 
     @Override
@@ -105,9 +106,9 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
 
         description = _ds.child("Description").getValue(String.class);
 
-        year = _ds.child("Year").getValue(String.class);
+        year = _ds.child("Year").getValue(Integer.class);
 
-        id = _ds.child("Id").getValue(String.class);
+        id = _ds.child("Id").getValue(Integer.class);
 
         books_name.add(new Book_item(name, author, genr, description, id, year));
     }
