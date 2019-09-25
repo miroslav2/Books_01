@@ -4,10 +4,12 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Spinner;
 
 import com.example.books_0_00_1.castomAdapter.Book_item;
 import com.example.books_0_00_1.castomAdapter.BoxAdapter;
@@ -17,17 +19,16 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
 public class ReadActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private ImageButton btn_search, btn_sort;
+    private ImageButton btn_search;
+    private Spinner sp_sort;
     private FirebaseAuth mAuth;
     private DatabaseReference myRef;
     private FirebaseUser user;
@@ -38,6 +39,11 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
     private Integer year, id, log;
     private BoxAdapter adapter;
     private EditText et_search;
+    private ArrayAdapter<String> arrayAdapter;
+    private String[] sort_spinner = {"По названию (А --> Я)",
+            "По названию (Я --> А)",
+            "По году выхода (по возрастанию)",
+            "По году выхода (по убыванию)"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,14 +51,19 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_read);
 
         btn_search = (ImageButton) findViewById(R.id.btn_search);
-        btn_sort = (ImageButton) findViewById(R.id.btn_sort);
         et_search = (EditText) findViewById(R.id.et_search);
+        sp_sort = (Spinner) findViewById(R.id.sp_sort);
 
         btn_search.setOnClickListener(this);
-        btn_sort.setOnClickListener(this);
 
         books_name = new ArrayList<>();
         books_name_search = new ArrayList<>();
+
+        arrayAdapter = new ArrayAdapter<String>(this,R.layout.support_simple_spinner_dropdown_item,sort_spinner);
+        arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        sp_sort.setAdapter(arrayAdapter);
+
+        sp_sort.setPrompt("Сортировка");
 
         log = 0;
 
@@ -66,7 +77,7 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot ds : dataSnapshot.getChildren()) {
-                    Create_Books_Name(ds);
+                    createBooksName(ds);
                 }
                 log = 1;
             }
@@ -74,7 +85,28 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {}
         });
-        UpdateUI(books_name);
+
+        sp_sort.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 0){
+                   sort_name_A_to_Z();
+                } else if(position == 1){
+                    sort_name_Z_to_A();
+                } else if(position == 2){
+                    sort_Year_1_to_10();
+                } else if(position == 3){
+                    sort_Year_10_to_1();
+                }
+                updateUI(books_name);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        updateUI(books_name);
     }
 
     @Override
@@ -86,12 +118,13 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
                     books_name_search.add(s);
                 }
             }
-            UpdateUI(books_name_search);
+            updateUI(books_name_search);
         }
+
 
     }
 
-    private void Create_Books_Name (DataSnapshot _ds){
+    private void createBooksName(DataSnapshot _ds){
         name = _ds.child("Name").getValue(String.class);
 
         author = _ds.child("Author").getValue(String.class);
@@ -107,16 +140,40 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
         books_name.add(new Book_item(name, author, genr, description, id, year));
     }
 
-    private void UpdateUI(ArrayList<Book_item> books){
+    private void updateUI(ArrayList<Book_item> books){
         adapter = new BoxAdapter(this, books);
         lv_books.setAdapter(adapter);
     }
 
-    public void sort() {
+    public void sort_name_A_to_Z() {
         Collections.sort(books_name, new Comparator<Book_item>() {
             @Override
             public int compare(Book_item book_item, Book_item t1) {
-               return book_item.getName().compareToIgnoreCase(t1.getName());
+                return book_item.getName().compareToIgnoreCase(t1.getName());
+            }
+        });
+    }
+    public void sort_name_Z_to_A() {
+        Collections.sort(books_name, new Comparator<Book_item>() {
+            @Override
+            public int compare(Book_item t1, Book_item book_item) {
+                return book_item.getName().compareToIgnoreCase(t1.getName());
+            }
+        });
+    }
+    public void sort_Year_1_to_10() {
+        Collections.sort(books_name, new Comparator<Book_item>() {
+            @Override
+            public int compare(Book_item book_item, Book_item t1) {
+                return book_item.getYear().compareTo(t1.getYear());
+            }
+        });
+    }
+    public void sort_Year_10_to_1() {
+        Collections.sort(books_name, new Comparator<Book_item>() {
+            @Override
+            public int compare(Book_item t1, Book_item book_item) {
+                return book_item.getYear().compareTo(t1.getYear());
             }
         });
     }
