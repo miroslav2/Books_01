@@ -34,12 +34,11 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
     private FirebaseUser user;
     private ListView lv_books;
     private ArrayList<Book_item> books_name, books_name_search;
-   // private Book_item my_book;
-    private String name, author, genr, description;
+    private String name, author, genre, description;
     private Integer year, id, log;
     private BoxAdapter adapter;
     private EditText et_search;
-    private ArrayAdapter<String> arrayAdapter;
+    private ArrayAdapter<String> arrayAdapter_1;
     private String[] sort_spinner = {"По названию (А --> Я)",
             "По названию (Я --> А)",
             "По году выхода (по возрастанию)",
@@ -59,10 +58,10 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
         books_name = new ArrayList<>();
         books_name_search = new ArrayList<>();
 
-        arrayAdapter = new ArrayAdapter<String>(this,R.layout.support_simple_spinner_dropdown_item,sort_spinner);
-        arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-        sp_sort.setAdapter(arrayAdapter);
+        arrayAdapter_1 = new ArrayAdapter<String>(this,R.layout.support_simple_spinner_dropdown_item,sort_spinner);
+        arrayAdapter_1.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
 
+        sp_sort.setAdapter(arrayAdapter_1);
         sp_sort.setPrompt("Сортировка");
 
         log = 0;
@@ -72,7 +71,7 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
         mAuth = FirebaseAuth.getInstance();
 
         myRef = FirebaseDatabase.getInstance().getReference();
-
+//Получение элементов из FireBase
         myRef.child("AllBooks").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -80,25 +79,28 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
                     createBooksName(ds);
                 }
                 log = 1;
+                updateUI(books_name);
+                sp_sort.setSelection(0);
+                sort_name_A_to_Z(books_name);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {}
         });
-
+//Сортировка по выбранному шаблону
         sp_sort.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position == 0){
-                   sort_name_A_to_Z();
+                   sort_name_A_to_Z(books_name_search);
                 } else if(position == 1){
-                    sort_name_Z_to_A();
+                    sort_name_Z_to_A(books_name_search);
                 } else if(position == 2){
-                    sort_Year_1_to_10();
+                    sort_Year_1_to_10(books_name_search);
                 } else if(position == 3){
-                    sort_Year_10_to_1();
+                    sort_Year_10_to_1(books_name_search);
                 }
-                updateUI(books_name);
+                updateUI(books_name_search);
             }
 
             @Override
@@ -106,30 +108,32 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
 
             }
         });
-        updateUI(books_name);
     }
 
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.btn_search && log == 1){
             books_name_search.clear();
+            //Поиск
             for (Book_item s : books_name) {
                 if (s.getName().contains(et_search.getText())) {
                     books_name_search.add(s);
                 }
             }
+            sort_name_A_to_Z(books_name_search);
+            sp_sort.setSelection(0);
             updateUI(books_name_search);
         }
 
 
     }
-
+//Чтение из FireBase
     private void createBooksName(DataSnapshot _ds){
         name = _ds.child("Name").getValue(String.class);
 
         author = _ds.child("Author").getValue(String.class);
 
-        genr = _ds.child("Genr").getValue(String.class);
+        genre = _ds.child("Genre").getValue(String.class);
 
         description = _ds.child("Description").getValue(String.class);
 
@@ -137,40 +141,41 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
 
         id = _ds.child("Id").getValue(Integer.class);
 
-        books_name.add(new Book_item(name, author, genr, description, id, year));
+        books_name.add(new Book_item(name, author, genre, description, id, year));
+        books_name_search.add(new Book_item(name, author, genre, description, id, year));
     }
-
+//Обновление ListView
     private void updateUI(ArrayList<Book_item> books){
         adapter = new BoxAdapter(this, books);
         lv_books.setAdapter(adapter);
     }
-
-    public void sort_name_A_to_Z() {
-        Collections.sort(books_name, new Comparator<Book_item>() {
+//Шаблоны сортировки
+    public void sort_name_A_to_Z(ArrayList<Book_item> _arrayList) {
+        Collections.sort(_arrayList, new Comparator<Book_item>() {
             @Override
             public int compare(Book_item book_item, Book_item t1) {
                 return book_item.getName().compareToIgnoreCase(t1.getName());
             }
         });
     }
-    public void sort_name_Z_to_A() {
-        Collections.sort(books_name, new Comparator<Book_item>() {
+    public void sort_name_Z_to_A(ArrayList<Book_item> _arrayList) {
+        Collections.sort(_arrayList, new Comparator<Book_item>() {
             @Override
             public int compare(Book_item t1, Book_item book_item) {
                 return book_item.getName().compareToIgnoreCase(t1.getName());
             }
         });
     }
-    public void sort_Year_1_to_10() {
-        Collections.sort(books_name, new Comparator<Book_item>() {
+    public void sort_Year_1_to_10(ArrayList<Book_item> _arrayList) {
+        Collections.sort(_arrayList, new Comparator<Book_item>() {
             @Override
             public int compare(Book_item book_item, Book_item t1) {
                 return book_item.getYear().compareTo(t1.getYear());
             }
         });
     }
-    public void sort_Year_10_to_1() {
-        Collections.sort(books_name, new Comparator<Book_item>() {
+    public void sort_Year_10_to_1(ArrayList<Book_item> _arrayList) {
+        Collections.sort(_arrayList, new Comparator<Book_item>() {
             @Override
             public int compare(Book_item t1, Book_item book_item) {
                 return book_item.getYear().compareTo(t1.getYear());

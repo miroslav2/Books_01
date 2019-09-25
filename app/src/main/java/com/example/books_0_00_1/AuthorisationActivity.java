@@ -33,15 +33,13 @@ public class AuthorisationActivity extends AppCompatActivity implements View.OnC
         setContentView(R.layout.activity_main);
 
         mAuth = FirebaseAuth.getInstance();
-
+//Проверка на наличие пользователя
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     StartActivity();
-                } else {
-                    // User is signed out
                 }
             }
         };
@@ -60,7 +58,7 @@ public class AuthorisationActivity extends AppCompatActivity implements View.OnC
             StartActivity();
         }
     }
-
+//Регистрация и вход
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.btn_signed_in){
@@ -77,7 +75,7 @@ public class AuthorisationActivity extends AppCompatActivity implements View.OnC
             }
         }
     }
-
+//Метод входа
     private void signing(final String email, final String password){
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
@@ -91,7 +89,7 @@ public class AuthorisationActivity extends AppCompatActivity implements View.OnC
             }
         });
     }
-
+//Метод регистрации
     private void registration(final String email, final String password){
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
@@ -105,10 +103,10 @@ public class AuthorisationActivity extends AppCompatActivity implements View.OnC
             }
         });
     }
-
+//Переход в следующий класс
     private void StartActivity(){
         Intent intent = new Intent(AuthorisationActivity.this, ReadActivity.class);
         startActivity(intent);
     }
 }
-//
+

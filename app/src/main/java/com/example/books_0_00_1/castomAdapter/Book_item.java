@@ -2,15 +2,15 @@ package com.example.books_0_00_1.castomAdapter;
 
 public class Book_item {
 
-    private String name, author, genr, description;
+    private String name, author, genre, description;
     private Integer year, id;
 
 
 
-    public Book_item(String _name, String _author, String _genr, String _description, Integer _id, Integer _year){
+    public Book_item(String _name, String _author, String _genre, String _description, Integer _id, Integer _year){
         this.name = _name;
         this.author = _author;
-        this.genr = _genr;
+        this.genre = _genre;
         this.description = _description;
         this.id = _id;
         this.year = _year;
@@ -24,8 +24,8 @@ public class Book_item {
         return author;
     }
 
-    public String getGenr() {
-        return genr;
+    public String getGenre() {
+        return genre;
     }
 
     public String getDescription() {
@@ -48,8 +48,8 @@ public class Book_item {
         this.author = author;
     }
 
-    public void setGenr(String genr) {
-        this.genr = genr;
+    public void setGenre(String genr) {
+        this.genre = genr;
     }
 
     public void setDescription(String description) {

@@ -54,7 +54,7 @@ public class BoxAdapter extends BaseAdapter {
 
             ((TextView) view.findViewById(R.id.tv_name)).setText(book_item.getName());
             ((TextView) view.findViewById(R.id.tv_author)).setText(book_item.getAuthor());
-            ((TextView) view.findViewById(R.id.tv_genr)).setText(book_item.getGenr());
+            ((TextView) view.findViewById(R.id.tv_genre)).setText(book_item.getGenre());
             ((TextView) view.findViewById(R.id.tv_year)).setText(book_item.getYear().toString());
             ((TextView) view.findViewById(R.id.tv_description)).setText(book_item.getDescription());
 
