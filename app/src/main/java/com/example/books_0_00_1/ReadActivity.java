@@ -43,7 +43,6 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
             "По названию (Я --> А)",
             "По году выхода (по возрастанию)",
             "По году выхода (по убыванию)"};
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,9 +78,9 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
                     createBooksName(ds);
                 }
                 log = 1;
-                updateUI(books_name);
                 sp_sort.setSelection(0);
                 sort_name_A_to_Z(books_name);
+                updateUI(books_name);
             }
 
             @Override
@@ -142,7 +141,6 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
         id = _ds.child("Id").getValue(Integer.class);
 
         books_name.add(new Book_item(name, author, genre, description, id, year));
-        books_name_search.add(new Book_item(name, author, genre, description, id, year));
     }
 //Обновление ListView
     private void updateUI(ArrayList<Book_item> books){

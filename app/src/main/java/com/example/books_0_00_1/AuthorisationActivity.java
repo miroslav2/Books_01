@@ -52,24 +52,19 @@ public class AuthorisationActivity extends AppCompatActivity implements View.OnC
 
         btn_signed_in.setOnClickListener(this);
         btn_registration.setOnClickListener(this);
-
-        FirebaseUser user = mAuth.getCurrentUser();
-        if (user != null) {
-            StartActivity();
-        }
     }
 //Регистрация и вход
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.btn_signed_in){
             if((et_email.getText().length() != 0) && (et_password.getText().length() != 0)) {
-                signing(et_email.getText().toString(), et_password.getText().toString());
+                signing(et_email.getText().toString(), String.valueOf(et_password.getText().toString().hashCode()));
             } else {
                 Toast.makeText(AuthorisationActivity.this, "Authorisation not successful", Toast.LENGTH_LONG).show();
             }
         } else if (view.getId() == R.id.btn_registration){
             if ((et_email.getText().length() != 0) && (et_password.getText().length() != 0)) {
-                registration(et_email.getText().toString(), et_password.getText().toString());
+                registration(et_email.getText().toString(), String.valueOf(et_password.getText().toString().hashCode()));
             } else {
                 Toast.makeText(AuthorisationActivity.this, "Registration not successful", Toast.LENGTH_LONG).show();
             }
