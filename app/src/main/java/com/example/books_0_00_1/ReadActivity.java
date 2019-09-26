@@ -1,8 +1,8 @@
 package com.example.books_0_00_1;
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -34,12 +34,10 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
     private FirebaseUser user;
     private ListView lv_books;
     private ArrayList<Book_item> books_name, books_name_search;
-    private String name, author, genre, description;
-    private Integer year, id, log;
-    private BoxAdapter adapter;
+    private Integer log;
     private EditText et_search;
-    private ArrayAdapter<String> arrayAdapter_1;
-    private String[] sort_spinner = {"По названию (А --> Я)",
+    private String[] sort_spinner = {
+            "По названию (А --> Я)",
             "По названию (Я --> А)",
             "По году выхода (по возрастанию)",
             "По году выхода (по убыванию)"};
@@ -48,44 +46,47 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_read);
 
-        btn_search = (ImageButton) findViewById(R.id.btn_search);
-        et_search = (EditText) findViewById(R.id.et_search);
-        sp_sort = (Spinner) findViewById(R.id.sp_sort);
+        btn_search = findViewById(R.id.btn_search);
+        et_search = findViewById(R.id.et_search);
+        sp_sort = findViewById(R.id.sp_sort);
 
         btn_search.setOnClickListener(this);
 
         books_name = new ArrayList<>();
         books_name_search = new ArrayList<>();
 
-        arrayAdapter_1 = new ArrayAdapter<String>(this,R.layout.support_simple_spinner_dropdown_item,sort_spinner);
+        ArrayAdapter<String> arrayAdapter_1 = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, sort_spinner);
         arrayAdapter_1.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
 
         sp_sort.setAdapter(arrayAdapter_1);
         sp_sort.setPrompt("Сортировка");
 
         log = 0;
-
-        lv_books = (ListView) findViewById(R.id.lv_books);
-
+        lv_books = findViewById(R.id.lv_books);
         mAuth = FirebaseAuth.getInstance();
-
         myRef = FirebaseDatabase.getInstance().getReference();
+
+
 //Получение элементов из FireBase
         myRef.child("AllBooks").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot ds : dataSnapshot.getChildren()) {
+                /*for(DataSnapshot ds : dataSnapshot.getChildren()) {
                     createBooksName(ds);
+                }*/
+                for (Long i = dataSnapshot.getChildrenCount() - 1; i != -1; --i) {
+                    createBooksName(dataSnapshot.child(i.toString()));
                 }
                 log = 1;
                 sp_sort.setSelection(0);
-                sort_name_A_to_Z(books_name);
-                updateUI(books_name);
+                //sort_name_A_to_Z(books_name);
+                books_name_search = new ArrayList<>(books_name);
+                updateUI(books_name_search);
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {}
         });
+
 //Сортировка по выбранному шаблону
         sp_sort.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -101,18 +102,17 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 updateUI(books_name_search);
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
             }
         });
     }
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.btn_search && log == 1){
+        if (view.getId() == R.id.btn_search && log == 1 && et_search.getText().length() != 0) {
             books_name_search.clear();
+
             //Поиск
             for (Book_item s : books_name) {
                 if (s.getName().contains(et_search.getText())) {
@@ -122,32 +122,28 @@ public class ReadActivity extends AppCompatActivity implements View.OnClickListe
             sort_name_A_to_Z(books_name_search);
             sp_sort.setSelection(0);
             updateUI(books_name_search);
-        }
-
-
+        } else
+            books_name_search = new ArrayList<>(books_name);
     }
 //Чтение из FireBase
     private void createBooksName(DataSnapshot _ds){
-        name = _ds.child("Name").getValue(String.class);
-
-        author = _ds.child("Author").getValue(String.class);
-
-        genre = _ds.child("Genre").getValue(String.class);
-
-        description = _ds.child("Description").getValue(String.class);
-
-        year = _ds.child("Year").getValue(Integer.class);
-
-        id = _ds.child("Id").getValue(Integer.class);
+        String name = _ds.child("Name").getValue(String.class);
+        String author = _ds.child("Author").getValue(String.class);
+        String genre = _ds.child("Genre").getValue(String.class);
+        String description = _ds.child("Description").getValue(String.class);
+        Integer year = _ds.child("Year").getValue(Integer.class);
+        Integer id = _ds.child("Id").getValue(Integer.class);
 
         books_name.add(new Book_item(name, author, genre, description, id, year));
     }
 //Обновление ListView
     private void updateUI(ArrayList<Book_item> books){
-        adapter = new BoxAdapter(this, books);
+        BoxAdapter adapter = new BoxAdapter(this, books);
         lv_books.setAdapter(adapter);
     }
-//Шаблоны сортировки
+
+
+    //Шаблоны сортировки
     public void sort_name_A_to_Z(ArrayList<Book_item> _arrayList) {
         Collections.sort(_arrayList, new Comparator<Book_item>() {
             @Override
